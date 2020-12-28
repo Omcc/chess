@@ -30,5 +30,15 @@ void displayBoard(struct Piece board[][8]);
 void move(struct Piece board[][8],char c,char source[],char destination[],int* whiteFlag);
 
 int* parseMove(char point[]);
+void pawnMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag);
+void rookMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag);
+void bishopMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag);
+void knightMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag);
+void queenMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag);
+void kingMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag);
+int isSourceEmpty(struct Piece board[][8],int* source);
+
+
+int* parseMove(char point[]);
 
 #endif

@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "chess.h"
 #include <string.h>
+#include <math.h>
+#include <stdlib.h>
 
 struct Piece createPiece(enum Type type,enum Color color,char* name)
 {
@@ -78,6 +80,7 @@ void move(struct Piece board[][8],char c,char source[],char destination[],int* w
     if(board[dest[1]][dest[0]].type!=NONE && board[dest[1]][dest[0]].color==playerFlag)
     {
         printf("\n !!! You can not move on your own piece\n");
+        return;
     }
 
     
@@ -95,6 +98,18 @@ void move(struct Piece board[][8],char c,char source[],char destination[],int* w
     {
         bishopMove(board,src,dest,whiteFlag);
     }
+    else if(srcPiece.type==KNIGHT)
+    {
+        knightMove(board,src,dest,whiteFlag);
+    }
+    else if(srcPiece.type==QUEEN)
+    {
+        queenMove(board,src,dest,whiteFlag);
+    }
+    else if(srcPiece.type==KING)
+    {
+        kingMove(board,src,dest,whiteFlag);
+    }
     
     
 
@@ -110,10 +125,10 @@ void pawnMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag)
     int y1=source[0];
     int y2=dest[0];
 
-    printf("x2 x1 %d %d",x2,x1);
+    
     int moveDirection = *whiteFlag?1:-1;
     int yMov=y2-y1;
-    printf("yMov %d moveDirection %d",yMov,moveDirection);
+    
     int xMov=x2-x1;
 
     if(xMov!=moveDirection)
@@ -125,7 +140,7 @@ void pawnMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag)
 
     if((y2-y1)!=0)
     {
-        printf("helloo");
+        
         if(Board[x2][y2].type!=NONE)
         {
             Board[x2][y2]=Board[x1][y1];
@@ -141,7 +156,7 @@ void pawnMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag)
         }
     }
     
-    printf("\n\n\n%d x2:%d y2:%d",Board[x2][y2].type,x2,y2);
+    
     if(Board[x2][y2].type!=NONE)
     {
         printf("\n Pawn is blocked. There is another piece on the way\n");
@@ -152,14 +167,6 @@ void pawnMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag)
     Board[x1][y1].type=NONE;
     Board[x1][y1].name="   ";
     *whiteFlag=*whiteFlag?0:1;
-
-
-
-
-    
-
-    
-
 
 }
 
@@ -260,13 +267,18 @@ void bishopMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag)
     int xMov=x2-x1;
     int yMov=y2-y1;
 
-    if(!xMov || !yMov)
+    
+
+
+    if(!xMov||!yMov)
     {
         printf("\n !!! Bishop can not go straight\n");
         return ;
     }
 
-    if(xMov!=yMov)
+
+    
+    if(abs(xMov)!=abs(yMov))
     {
         printf("\n !!! Bishop can only go cross \n");
         return;
@@ -280,19 +292,89 @@ void bishopMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag)
 
 }
 
-void knightMove()
+void knightMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag)
 {
+    
+    int x1=source[1];
+    int x2=dest[1];
+    int y1=source[0];
+    int y2=dest[0];
+
+    int xMov=x2-x1;
+    int yMov=y2-y1;
+
+    yMov=abs(yMov);
+    xMov=abs(xMov);
+
+    if(xMov > 2 || yMov > 2)
+    {
+        printf("!! Wrong Knight Move ----L>\n");
+        return;
+    }
+    
+
+    if(!((xMov==2 || yMov==2) && (xMov==1 || yMov==1)))
+    {
+        printf("!! Wrong knight Move ----L\n");
+        return;
+    }
+    
+    Board[x2][y2]=Board[x1][y1];
+    Board[x1][y1].type=NONE;
+    Board[x1][y1].name="   ";
+    *whiteFlag=*whiteFlag?0:1;
+    
+    
+}
+
+void queenMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag)
+{
+
+    int x1=source[1];
+    int x2=dest[1];
+    int y1=source[0];
+    int y2=dest[0];
+
+    int xMov=x2-x1;
+    int yMov=y2-y1;
+
+    int notGoCross = abs(xMov)!=abs(yMov);
+    int notGoStraight= (xMov && yMov);
+    
+    
+     if(notGoCross && notGoStraight)
+    {
+        printf("\n !!! Wrong move for queen\n");
+        return;
+    }
+
+    Board[x2][y2]=Board[x1][y1];
+    Board[x1][y1].type=NONE;
+    Board[x1][y1].name="   ";
+    *whiteFlag=*whiteFlag?0:1;
 
 }
 
-void queenMove()
+void kingMove(struct Piece Board[][8],int* source,int* dest,int *whiteFlag)
 {
+    int x1=source[1];
+    int x2=dest[1];
+    int y1=source[0];
+    int y2=dest[0];
 
-}
+    int xMov=x2-x1;
+    int yMov=y2-y1;
 
-void kingMove()
-{
+    if(abs(xMov>1) || abs(yMov>1))
+    {
+        printf("\n !!! King can move one step at a time \n ");
+        return;
+    }
 
+    Board[x2][y2]=Board[x1][y1];
+    Board[x1][y1].type=NONE;
+    Board[x1][y1].name="   ";
+    *whiteFlag=*whiteFlag?0:1;
 }
 
 
